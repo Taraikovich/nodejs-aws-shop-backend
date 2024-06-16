@@ -1,0 +1,108 @@
+openapi: 3.1.0
+info:
+  title: Products Service API
+  description: API for managing products
+  version: 1.0.0
+servers:
+  - url: https://7dh1v6j0jd.execute-api.eu-central-1.amazonaws.com/prod
+
+paths:
+  /products:
+    get:
+      summary: Get list of products
+      responses:
+        "200":
+          description: Returns a list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+              examples:
+                sample:
+                  summary: A sample list of products
+                  value:
+                    - id: "1"
+                      title: "Sample Product 1"
+                      description: "Description for Sample Product 1"
+                      price: 99.99
+                    - id: "2"
+                      title: "Sample Product 2"
+                      description: "Description for Sample Product 2"
+                      price: 149.99
+
+  /products/{id}:
+    get:
+      summary: Get a product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "1"
+      responses:
+        "200":
+          description: A single product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+              examples:
+                sample:
+                  summary: A sample product
+                  value:
+                    id: "1"
+                    title: "Sample Product 1"
+                    description: "Description for Sample Product 1"
+                    price: 99.99
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                notFound:
+                  summary: Product not found response
+                  value:
+                    message: "Product not found"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                invalid:
+                  summary: Invalid request response
+                  value:
+                    message: "Invalid product ID"
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+      example:
+        id: "1"
+        title: "Sample Product 1"
+        description: "Description for Sample Product 1"
+        price: 99.99
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: "Error message"
