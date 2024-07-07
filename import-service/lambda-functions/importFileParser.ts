@@ -6,9 +6,14 @@ import {
     DeleteObjectCommand
 } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
+import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import csvParser from 'csv-parser';
 
 const s3Client = new S3Client({ region: 'eu-central-1' });
+const sqsClient = new SQSClient({ region: 'eu-central-1' });
+
+const CATALOG_ITEMS_QUEUE_URL = process.env.CATALOG_ITEMS_QUEUE_URL;
+console.log('Queue URL:', CATALOG_ITEMS_QUEUE_URL);
 
 export const handler: S3Handler = async (event: S3Event): Promise<void> => {
     const bucket = event.Records[0].s3.bucket.name;
@@ -37,13 +42,27 @@ export const handler: S3Handler = async (event: S3Event): Promise<void> => {
         const records: any[] = [];
         await new Promise<void>((resolve, reject) => {
             Body.pipe(csvParser())
-                .on('data', (data) => {
+                .on('data', async (data) => {
                     console.log('Parsed record:', data);
                     records.push(data);
                 })
                 .on('end', async () => {
                     try {
                         console.log('CSV file parsed successfully.');
+
+                        await Promise.all(records.map(async (record) => {
+                            const sendMessageCommand = new SendMessageCommand({
+                                QueueUrl: CATALOG_ITEMS_QUEUE_URL,
+                                MessageBody: JSON.stringify(record)
+                            });
+                            try {
+                                await sqsClient.send(sendMessageCommand);
+                                console.log('Record sent to SQS:', record);
+                            } catch (error) {
+                                console.error('Error sending message to SQS:', error);
+                                throw error;
+                            }
+                        }));
 
                         const copyObjectParams = {
                             Bucket: bucket,
