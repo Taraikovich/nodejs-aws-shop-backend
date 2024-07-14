@@ -11,8 +11,9 @@
     "cdk": "cdk"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.140",
     "@types/jest": "^29.5.12",
-    "@types/node": "20.14.2",
+    "@types/node": "^20.14.10",
     "aws-cdk": "2.146.0",
     "aws-sdk": "^2.1653.0",
     "aws-sdk-client-mock": "^4.0.1",
@@ -23,8 +24,7 @@
     "ts-node": "^10.9.2",
     "typescript": "~5.4.5",
     "webpack": "^5.92.1",
-    "webpack-cli": "^5.1.4",
-    "@types/aws-lambda": "^8.10.140"
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "@aws-cdk/aws-apigateway": "^1.38.0",
@@ -37,8 +37,8 @@
     "@aws-cdk/aws-s3": "^1.84.0",
     "@aws-cdk/aws-sqs": "^1.204.0",
     "@aws-sdk/client-dynamodb": "^3.609.0",
-    "@aws-sdk/client-sns": "^3.609.0",
     "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/client-sns": "^3.609.0",
     "@aws-sdk/client-sqs": "^3.609.0",
     "@aws-sdk/lib-dynamodb": "^3.609.0",
     "@aws-sdk/s3-request-presigner": "^3.600.0",
